@@ -5,11 +5,23 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fighting Game</title>
+    <link rel="stylesheet" href="./css/style.css">
 </head>
 <body>
-    <canvas>
-
-    </canvas>
+    <div class="container">
+        <div class="top-section">
+            <div class="health player_health">
+                <div class="total-health player_total-health"></div>
+                <div id="playerHealth" class="lost-health player_lost-health"></div>
+            </div>
+            <div class="timer"></div>
+            <div class="health enemy_health">
+                <div class="total-health enemy_total-health"></div>
+                <div id="enemyHealth" class="lost-health enemy_lost-health"></div>
+            </div>
+        </div>
+        <canvas></canvas>
+    </div>
+    <script src="./js/script.js"></script>
 </body>
-<script src="script.js"></script>
 </html>

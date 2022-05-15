@@ -11,7 +11,7 @@ context.fillRect(0, 0, canvas.width, canvas.height);
 const gravity = 0.7;
 
 class Sprite {
-    constructor({ position, velocity, color = 'red', offset }) {
+    constructor({ position, velocity, color = 'orange', offset }) {
         this.position = position;
         this.velocity = velocity;
         this.width = 50;
@@ -28,6 +28,7 @@ class Sprite {
             height: 50
         };
         this.isAttacking = false;
+        this.health = 100;
     }
 
     draw() {
@@ -99,7 +100,7 @@ const enemy = new Sprite({
         x: -50,
         y: 0
     },
-    color: 'blue'
+    color: 'navy'
 });
 
 const keys = {
@@ -147,9 +148,13 @@ function animate() {
     //Detect for Collision
     if (rectangularCollision({ firstRectangle: player, secondRectangle: enemy }) && player.isAttacking) {
         player.isAttacking = false;
+        enemy.health -= 20;
+        document.querySelector('#enemyHealth').style.width = enemy.health + '%';
     }
     else if (rectangularCollision({ firstRectangle: enemy, secondRectangle: player }) && enemy.isAttacking) {
         enemy.isAttacking = false;
+        player.health -= 20;
+        document.querySelector('#playerHealth').style.width = player.health + '%';
     }
 }
 

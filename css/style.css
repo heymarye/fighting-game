@@ -1,0 +1,59 @@
+* {
+    box-sizing: border-box;
+}
+
+.container {
+    position: relative;
+    display: inline-block;
+}
+
+.top-section {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 20px;
+}
+
+.timer {
+    background-color: #fffaf0;
+    height: 100px;
+    width: 100px;
+    flex-shrink: 0;
+}
+
+.health {
+    position: relative;
+    height: 30px;
+    width: 100%;
+}
+
+.total-health {
+    background-color: #2f4f4f;
+    height: 30px;
+}
+
+.lost-health {
+    position: absolute;
+    background: #ffd700;
+    top: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.player_health {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.player_total-health {
+    width: 100%;
+}
+
+.player_lost-health {
+    width: 100%;
+}
+
+.enemy_lost-health {
+    left: 0;
+}
