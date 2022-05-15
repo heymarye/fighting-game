@@ -20,6 +20,9 @@
     height: 100px;
     width: 100px;
     flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .health {
@@ -34,8 +37,8 @@
 }
 
 .lost-health {
-    position: absolute;
     background: #ffd700;
+    position: absolute;
     top: 0;
     right: 0;
     bottom: 0;
@@ -56,4 +59,16 @@
 
 .enemy_lost-health {
     left: 0;
+}
+
+.label {
+    color: #ffffff;
+    position: absolute;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
 }

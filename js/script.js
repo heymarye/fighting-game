@@ -120,53 +120,6 @@ const keys = {
     }
 };
 
-function animate() {
-    window.requestAnimationFrame(animate);
-    context.fillStyle = 'black';
-    context.fillRect(0, 0, canvas.width, canvas.height);
-    player.update();
-    enemy.update();
-
-    //Player Movement
-    player.velocity.x = 0;
-    if (keys.a.pressed && player.lastKey === 'a') {
-        player.velocity.x = -5;
-    }
-    else if (keys.d.pressed && player.lastKey === 'd') {
-        player.velocity.x = 5;
-    }
-
-    //Enemy Movement
-    enemy.velocity.x = 0;
-    if (keys.ArrowLeft.pressed && enemy.lastKey === 'ArrowLeft') {
-        enemy.velocity.x = -5;
-    }
-    else if (keys.ArrowRight.pressed && enemy.lastKey === 'ArrowRight') {
-        enemy.velocity.x = 5;
-    }
-
-    //Detect for Collision
-    if (rectangularCollision({ firstRectangle: player, secondRectangle: enemy }) && player.isAttacking) {
-        player.isAttacking = false;
-        enemy.health -= 20;
-        document.querySelector('#enemyHealth').style.width = enemy.health + '%';
-    }
-    else if (rectangularCollision({ firstRectangle: enemy, secondRectangle: player }) && enemy.isAttacking) {
-        enemy.isAttacking = false;
-        player.health -= 20;
-        document.querySelector('#playerHealth').style.width = player.health + '%';
-    }
-}
-
-animate();
-
-function rectangularCollision({ firstRectangle, secondRectangle }) {
-    return (firstRectangle.attackBox.position.x + firstRectangle.attackBox.width >= secondRectangle.position.x && 
-        firstRectangle.attackBox.position.x <= secondRectangle.position.x + secondRectangle.width &&
-        firstRectangle.attackBox.position.y + firstRectangle.attackBox.height >= secondRectangle.position.y && 
-        firstRectangle.attackBox.position.y <= secondRectangle.position.y + secondRectangle.height);
-}
-
 window.addEventListener('keydown', (event) => {
     switch (event.key) {
         case 'd':
@@ -218,3 +171,85 @@ window.addEventListener('keyup', (event) => {
             break;
     }
 });
+
+function animate() {
+    window.requestAnimationFrame(animate);
+    context.fillStyle = 'black';
+    context.fillRect(0, 0, canvas.width, canvas.height);
+    player.update();
+    enemy.update();
+
+    //Player Movement
+    player.velocity.x = 0;
+    if (keys.a.pressed && player.lastKey === 'a') {
+        player.velocity.x = -5;
+    }
+    else if (keys.d.pressed && player.lastKey === 'd') {
+        player.velocity.x = 5;
+    }
+
+    //Enemy Movement
+    enemy.velocity.x = 0;
+    if (keys.ArrowLeft.pressed && enemy.lastKey === 'ArrowLeft') {
+        enemy.velocity.x = -5;
+    }
+    else if (keys.ArrowRight.pressed && enemy.lastKey === 'ArrowRight') {
+        enemy.velocity.x = 5;
+    }
+
+    //Detect for Collision
+    if (rectangularCollision({ firstRectangle: player, secondRectangle: enemy }) && player.isAttacking) {
+        player.isAttacking = false;
+        enemy.health -= 20;
+        document.querySelector('#enemyHealth').style.width = enemy.health + '%';
+    }
+    else if (rectangularCollision({ firstRectangle: enemy, secondRectangle: player }) && enemy.isAttacking) {
+        enemy.isAttacking = false;
+        player.health -= 20;
+        document.querySelector('#playerHealth').style.width = player.health + '%';
+    }
+
+    //End of The Game Based on Health
+    if (enemy.health <= 0 || player.health <= 0) {
+        determineWinner({ player, enemy, timerId });
+    }
+}
+
+animate();
+
+function rectangularCollision({ firstRectangle, secondRectangle }) {
+    return (firstRectangle.attackBox.position.x + firstRectangle.attackBox.width >= secondRectangle.position.x && 
+        firstRectangle.attackBox.position.x <= secondRectangle.position.x + secondRectangle.width &&
+        firstRectangle.attackBox.position.y + firstRectangle.attackBox.height >= secondRectangle.position.y && 
+        firstRectangle.attackBox.position.y <= secondRectangle.position.y + secondRectangle.height);
+}
+
+let timer = 10;
+let timerId;
+function decreaseTimer() {
+    if (timer > 0) {
+        timerId = setTimeout(decreaseTimer, 1000);
+        timer--;
+        document.querySelector('#timer').innerHTML = timer;
+    }
+
+    if (timer === 0) {
+        determineWinner({ player, enemy, timerId });
+    }
+}
+
+decreaseTimer();
+
+function determineWinner({ player, enemy, timerId }) {
+    clearTimeout(timerId);
+    document.querySelector('#displayText').style.display = 'flex';
+    if (player.health > enemy.health) {
+        document.querySelector('#displayText').innerHTML = 'Player 1 Wins!';
+    }
+    else if (player.health < enemy.health) {
+        document.querySelector('#displayText').innerHTML = 'Player 2 Wins!';
+    }
+    else {
+        document.querySelector('#displayText').innerHTML = 'Tie!';
+    }
+}
