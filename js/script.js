@@ -52,6 +52,18 @@ const player = new Fighter({
         run: {
             imgSrc: './assets/mack/run.png',
             framesMax: 8
+        },
+        jump: {
+            imgSrc: './assets/mack/jump.png',
+            framesMax: 2
+        },
+        fall: {
+            imgSrc: './assets/mack/fall.png',
+            framesMax: 2
+        },
+        attack1: {
+            imgSrc: './assets/mack/attack1.png',
+            framesMax: 6
         }
     }
 });
@@ -153,14 +165,22 @@ function animate() {
 
     //Player Movement
     player.velocity.x = 0;
-    player.image = player.sprites.idle.image;
     if (keys.a.pressed && player.lastKey === 'a') { 
         player.velocity.x = -5;
-        player.image = player.sprites.run.image;
+        player.switchSprite('run');
     }
     else if (keys.d.pressed && player.lastKey === 'd') {
         player.velocity.x = 5;
-        player.image = player.sprites.run.image;
+        player.switchSprite('run');
+    }
+    else if (player.velocity.y < 0) {
+        player.switchSprite('jump');
+    }
+    else if (player.velocity.y > 0) {
+        player.switchSprite('fall');
+    }
+    else {
+        player.switchSprite('idle');
     }
 
     //Enemy Movement
