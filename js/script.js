@@ -64,7 +64,23 @@ const player = new Fighter({
         attack1: {
             imgSrc: './assets/mack/attack1.png',
             framesMax: 6
+        },
+        takeHit: {
+            imgSrc: './assets/mack/take_hit1.png',
+            framesMax: 4
+        },
+        death: {
+            imgSrc: './assets/mack/death.png',
+            framesMax: 6
         }
+    },
+    attackBox: {
+        offset: {
+            x: 90,
+            y: 0
+        },
+        width: 160,
+        height: 120
     }
 });
 
@@ -104,7 +120,23 @@ const enemy = new Fighter({
         attack1: {
             imgSrc: './assets/kenji/attack1.png',
             framesMax: 4
+        },
+        takeHit: {
+            imgSrc: './assets/kenji/take_hit.png',
+            framesMax: 3
+        },
+        death: {
+            imgSrc: './assets/kenji/death.png',
+            framesMax: 7
         }
+    },
+    attackBox: {
+        offset: {
+            x: -170,
+            y: 0
+        },
+        width: 150,
+        height: 120
     }
 });
 
@@ -126,36 +158,42 @@ const keys = {
 };
 
 window.addEventListener('keydown', (event) => {
-    switch (event.key) {
-        case 'd':
-            keys.d.pressed = true;
-            player.lastKey = 'd';
-            break;
-        case 'a':
-            keys.a.pressed = true;
-            player.lastKey = 'a';
-            break;
-        case 'w':
-            player.velocity.y = -20;
-            break;
-        case 's':
-            player.attack();
-            break;
+    if (!player.death) {
+        switch (event.key) {
+            case 'd':
+                keys.d.pressed = true;
+                player.lastKey = 'd';
+                break;
+            case 'a':
+                keys.a.pressed = true;
+                player.lastKey = 'a';
+                break;
+            case 'w':
+                player.velocity.y = -20;
+                break;
+            case 's':
+                player.attack();
+                break;
+        }
+    }
 
-        case 'ArrowRight':
-            keys.ArrowRight.pressed = true;
-            enemy.lastKey = 'ArrowRight';
-            break;
-        case 'ArrowLeft':
-            keys.ArrowLeft.pressed = true;
-            enemy.lastKey = 'ArrowLeft';
-            break;
-        case 'ArrowUp':
-            enemy.velocity.y = -20;
-            break;
-        case 'ArrowDown':
-            enemy.attack();
-            break;
+    if (!enemy.death) {
+        switch(event.key) {
+            case 'ArrowRight':
+                keys.ArrowRight.pressed = true;
+                enemy.lastKey = 'ArrowRight';
+                break;
+            case 'ArrowLeft':
+                keys.ArrowLeft.pressed = true;
+                enemy.lastKey = 'ArrowLeft';
+                break;
+            case 'ArrowUp':
+                enemy.velocity.y = -20;
+                break;
+            case 'ArrowDown':
+                enemy.attack();
+                break;
+        }
     }
 });
 
@@ -228,15 +266,24 @@ function animate() {
     }
 
     //Detect for Collision
-    if (rectangularCollision({ firstRectangle: player, secondRectangle: enemy }) && player.isAttacking) {
+    if (rectangularCollision({ firstRectangle: player, secondRectangle: enemy }) && 
+    player.isAttacking && player.framesCurrent === 4) {
         player.isAttacking = false;
-        enemy.health -= 20;
+        enemy.takeHit();
         document.querySelector('#enemyHealth').style.width = enemy.health + '%';
     }
-    else if (rectangularCollision({ firstRectangle: enemy, secondRectangle: player }) && enemy.isAttacking) {
+    else if (player.isAttacking && player.framesCurrent === 4) {
+        player.isAttacking = false;
+    }
+    
+    if (rectangularCollision({ firstRectangle: enemy, secondRectangle: player }) && 
+    enemy.isAttacking && enemy.framesCurrent === 2) {
         enemy.isAttacking = false;
-        player.health -= 20;
+        player.takeHit();
         document.querySelector('#playerHealth').style.width = player.health + '%';
+    }
+    else if (enemy.isAttacking && enemy.framesCurrent === 2) {
+        enemy.isAttacking = false;
     }
 
     //End of The Game Based on Health

@@ -52,7 +52,8 @@ class Sprite {
 class Fighter extends Sprite {
     constructor({ position, velocity, 
         color = 'orange', offset = { x: 0, y: 0 }, 
-        imgSrc, scale = 1, framesMax = 1, sprites }) {
+        imgSrc, scale = 1, framesMax = 1, sprites, 
+        attackBox = { offset: {}, width: undefined, height: undefined } }) {
         super({
             position,
             offset,
@@ -71,9 +72,9 @@ class Fighter extends Sprite {
                 x: this.position.x,
                 y: this.position.y
             },
-            offset,
-            width: 100,
-            height: 50
+            offset: attackBox.offset,
+            width: attackBox.width,
+            height: attackBox.height
         };
         this.isAttacking = false;
         this.health = 100;
@@ -87,11 +88,24 @@ class Fighter extends Sprite {
             sprites[sprite].image = new Image();
             sprites[sprite].image.src = sprites[sprite].imgSrc;
         }
+        this.death = false;
     }
 
     switchSprite(sprite) {
+        //Override If Fighter Attacks
         if (this.image === this.sprites.attack1.image && this.framesCurrent < this.sprites.attack1.framesMax - 1) {
             return; 
+        }
+        //Override If Fighter Gets Hit
+        if (this.image === this.sprites.takeHit.image && this.framesCurrent < this.sprites.takeHit.framesMax - 1) {
+            return;
+        }
+        //Override If Fighter Dies
+        if (this.image === this.sprites.death.image) {
+            if (this.framesCurrent === this.sprites.death.framesMax - 1) {
+                this.death = true;
+            }
+            return;
         }
         switch (sprite) {
             case 'idle': 
@@ -129,26 +143,58 @@ class Fighter extends Sprite {
                     this.framesCurrent = 0;
                 }
                 break;
+            case 'takeHit':
+                if (this.image !== this.sprites.takeHit.image) {
+                    this.image = this.sprites.takeHit.image;
+                    this.framesMax = this.sprites.takeHit.framesMax;
+                    this.framesCurrent = 0;
+                }
+                break;
+            case 'death':
+                if (this.image !== this.sprites.death.image) {
+                    this.image = this.sprites.death.image;
+                    this.framesMax = this.sprites.death.framesMax;
+                    this.framesCurrent = 0;
+                }
+                break;
         }
     }
 
     attack() {
         this.switchSprite('attack1');
         this.isAttacking = true;
-        setTimeout(() => {
-            this.isAttacking = false;
-        }, 100);
+    }
+
+    takeHit() {
+        this.health -= 20;
+
+        if (this.health <= 0) {
+            this.switchSprite('death');
+        }
+        else {
+            this.switchSprite('takeHit');
+        }
     }
 
     update() {
         this.draw();
-        this.animateFrames();
+        if (!this.death) {
+            this.animateFrames();
+        }
 
         this.position.x += this.velocity.x;
         this.position.y += this.velocity.y;
 
+        //Draw the Attack Box
+        // context.fillRect(
+        //     this.attackBox.position.x, 
+        //     this.attackBox.position.y, 
+        //     this.attackBox.width, 
+        //     this.attackBox.height
+        // );
+
         this.attackBox.position.x = this.position.x + this.attackBox.offset.x;
-        this.attackBox.position.y = this.position.y;
+        this.attackBox.position.y = this.position.y + this.attackBox.offset.y;
 
         //Gravity
         if (this.position.y + this.height + this.velocity.y >= canvas.height - 96) {
