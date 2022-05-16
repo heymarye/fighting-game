@@ -25,10 +25,10 @@ function determineWinner({ player, enemy, timerId }) {
     clearTimeout(timerId);
     document.querySelector('#displayText').style.display = 'flex';
     if (player.health > enemy.health) {
-        document.querySelector('#displayText').innerHTML = 'Player 1 Wins!';
+        document.querySelector('#displayText').innerHTML = 'Mack Wins!';
     }
     else if (player.health < enemy.health) {
-        document.querySelector('#displayText').innerHTML = 'Player 2 Wins!';
+        document.querySelector('#displayText').innerHTML = 'Kenji Wins!';
     }
     else {
         document.querySelector('#displayText').innerHTML = 'Tie!';
