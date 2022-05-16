@@ -38,8 +38,21 @@ const player = new Fighter({
         y: 0
     },
     offset: {
-        x: 0,
-        y: 0
+        x: 215,
+        y: 157
+    },
+    imgSrc: './assets/mack/idle.png',
+    scale: 2.5,
+    framesMax: 8,
+    sprites: {
+        idle: {
+            imgSrc: './assets/mack/idle.png',
+            framesMax: 8
+        },
+        run: {
+            imgSrc: './assets/mack/run.png',
+            framesMax: 8
+        }
     }
 });
 
@@ -136,15 +149,18 @@ function animate() {
     background.update();
     shop.update();
     player.update();
-    enemy.update();
+    //enemy.update();
 
     //Player Movement
     player.velocity.x = 0;
-    if (keys.a.pressed && player.lastKey === 'a') {
+    player.image = player.sprites.idle.image;
+    if (keys.a.pressed && player.lastKey === 'a') { 
         player.velocity.x = -5;
+        player.image = player.sprites.run.image;
     }
     else if (keys.d.pressed && player.lastKey === 'd') {
         player.velocity.x = 5;
+        player.image = player.sprites.run.image;
     }
 
     //Enemy Movement
